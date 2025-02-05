@@ -1,4 +1,4 @@
-package com.example.tiendat.modules.users.dtos;
+package com.example.tiendat.modules.users.requests;
 
 public class LoginRequest {
     

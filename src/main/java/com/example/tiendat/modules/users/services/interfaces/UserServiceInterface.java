@@ -1,10 +1,10 @@
 package com.example.tiendat.modules.users.services.interfaces;
 
-import com.example.tiendat.modules.users.dtos.LoginResponse;
-import com.example.tiendat.modules.users.dtos.LoginRequest;
+import com.example.tiendat.modules.users.requests.LoginRequest;
+import com.example.tiendat.modules.users.resources.LoginResource;
 
 public interface UserServiceInterface {
     
-    LoginResponse login(LoginRequest request);
+    LoginResource login(LoginRequest request);
 
 }

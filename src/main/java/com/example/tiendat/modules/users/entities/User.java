@@ -10,9 +10,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Table;
 
+import lombok.Data; // tu dong tao getter va setter
+import lombok.NoArgsConstructor; // tu dong tao ham khoi tao khong tham so
+import lombok.AllArgsConstructor; // tu dong tao ham khoi tao co tham so
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Entity
 @Table(name = "users")
-public class User {
+public class User { // nguoi dung
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -118,16 +125,16 @@ public class User {
         return updatedAt;
     }
 
-    public User() {
+    // public User() {
         
-    }
+    // }
 
-    public User(String name, String email, String password, Long userCatalogueId, String phone) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.UserCatalogueId = userCatalogueId;
-        this.phone = phone;
-    }
+    // public User(String name, String email, String password, Long userCatalogueId, String phone) {
+    //     this.name = name;
+    //     this.email = email;
+    //     this.password = password;
+    //     this.UserCatalogueId = userCatalogueId;
+    //     this.phone = phone;
+    // }
 
 }

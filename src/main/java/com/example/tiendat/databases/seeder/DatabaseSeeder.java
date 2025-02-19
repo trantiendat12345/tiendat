@@ -16,7 +16,7 @@ import com.example.tiendat.modules.users.repositories.UserRepository;
 @Component
 public class DatabaseSeeder implements CommandLineRunner {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseSeeder.class);
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseSeeder.class);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -61,13 +61,31 @@ public class DatabaseSeeder implements CommandLineRunner {
             // user.setPhone("1203012301203");
             // userRepository.save(user);
 
-            User user = new User("Tien Dat", "trantiendat@gmail.com", password, 1L, "123434232342234");
-            userRepository.save(user);
-            LOGGER.info("Database seeded");
+            // User user = new User("Tien Dat", "trantiendat@gmail.com", password, 1L, "123434232342234");
+            // userRepository.save(user);
+            // LOGGER.info("Database seeded");
 
-            User user2 = new User("Nhu Quynh", "nguyennhuquynh@gmail.com", password, 1L, "12342312312");
+            // User user2 = new User("Nhu Quynh", "nguyennhuquynh@gmail.com", password, 1L, "12342312312");
+            // userRepository.save(user2);
+            // LOGGER.info("Database seeded");
+
+            User user = new User();
+            user.setName("Tien Dat");
+            user.setEmail("trantiendat@gmail.com");
+            user.setPassword(password);
+            user.setUserCatalogueId(1L);
+            user.setPhone("1203012301203");
+            userRepository.save(user);
+            logger.info("Database seeded");
+
+            User user2 = new User();
+            user2.setName("Nhu Quynh");
+            user2.setEmail("nguyennhuquynh@gmail.com");
+            user2.setPassword(password);
+            user2.setUserCatalogueId(2L);
+            user2.setPhone("12342312312");
             userRepository.save(user2);
-            LOGGER.info("Database seeded");
+            logger.info("Database seeded");
             
         } 
 

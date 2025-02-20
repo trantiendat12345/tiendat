@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.Keys; // dung de tao key
 import java.util.Base64;
 import java.util.Date;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
 import com.example.tiendat.config.JWTConfig;
@@ -31,6 +32,30 @@ public class JWTService {
         .setExpiration(expiryDate)
         .signWith(key, SignatureAlgorithm.HS512)
         .compact();
+    }
+
+    // public String extractUserName(String token) {
+    //     return extractClaim(token, Claims::getSubject);
+    // }
+
+    // private <T> T extractClaim(String token, java.util.function.Function<Claims, T> claimsResolver) {
+    //     final Claims claims = extractAllClaims(token);
+    //     return claimsResolver.apply(claims); // tra ve gia tri cua claim
+    // }
+
+    // private Claims extractAllClaims(String token) {
+    //     return Jwts.parserBuilder()
+    //     .setSigningKey(key)
+    //     .build()
+    //     .parseClaimsJws(token)
+    //     .getBody();
+    // }
+
+    public String getUserIdFromJwt(String token) {
+
+        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        
+        return claims.getSubject();
     }
 
 }

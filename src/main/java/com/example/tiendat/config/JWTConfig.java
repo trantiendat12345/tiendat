@@ -12,12 +12,19 @@ public class JWTConfig {
     @Value("${jwt.expiration}")
     private Long expirationTime;
 
+    @Value("${jwt.issuer}")
+    private String issuer;
+
     public String getSecretKey() {
         return secretKey;
     }
 
     public Long getExpirationTime() {
         return expirationTime;
+    }
+
+    public String getIssue() {
+        return issuer;
     }
 
 }

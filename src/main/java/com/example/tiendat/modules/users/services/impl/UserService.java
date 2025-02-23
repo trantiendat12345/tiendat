@@ -50,7 +50,7 @@ public class UserService extends BaseService implements UserServiceInterface {
             }
 
             // String token = "random_token";
-            UserResource userResource = new UserResource(user.getId(), user.getEmail(), user.getName());
+            UserResource userResource = new UserResource(user.getId(), user.getEmail(), user.getName(), user.getPhone());
             String token = jwtService.generateToken(user.getId(), user.getEmail()); // token chua thong tin user
 
             return new LoginResource(token, userResource);

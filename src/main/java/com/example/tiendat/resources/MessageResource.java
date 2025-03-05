@@ -4,13 +4,13 @@ import lombok.*;
 
 @Data
 @RequiredArgsConstructor
-@AllArgsConstructor
+// @AllArgsConstructor
 public class MessageResource {
 
     private String message;
 
-    // public MessageResource(String message) {
-    //     this.message = message;
-    // }
+    public MessageResource(String message) {
+        this.message = message;
+    }
     
 }

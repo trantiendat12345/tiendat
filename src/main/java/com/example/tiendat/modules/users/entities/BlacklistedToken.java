@@ -39,4 +39,19 @@ public class BlacklistedToken {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public void setExpiryDate(LocalDateTime expiryDate) {
+        this.expiryDate = expiryDate;
+    }
 }

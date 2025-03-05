@@ -2,6 +2,7 @@ package com.example.tiendat.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Key; // dung de tao key
@@ -17,6 +18,7 @@ import io.jsonwebtoken.security.SignatureException;
 import io.jsonwebtoken.ExpiredJwtException;
 
 import com.example.tiendat.config.JWTConfig;
+import com.example.tiendat.modules.users.repositories.BlacklistedTokenRepository;
 
 @Service
 public class JWTService {
@@ -24,6 +26,9 @@ public class JWTService {
     private final JWTConfig jwtConfig;
     private final Key key;
     private static final Logger logger = LoggerFactory.getLogger(JWTService.class);
+
+    @Autowired
+    private BlacklistedTokenRepository blacklistedTokenRepository;
 
     public JWTService(JWTConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
@@ -191,11 +196,15 @@ public class JWTService {
         return jwtConfig.getIssue().equals(tokenIssuer);
     }
 
-    private Claims getAllClaimsFromToken(String token) {
+    public boolean isBlacklistedToken(String token) {
+        return blacklistedTokenRepository.existsByToken(token);
+    }
+
+    public Claims getAllClaimsFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
     }
 
-    private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }

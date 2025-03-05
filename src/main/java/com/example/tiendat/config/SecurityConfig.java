@@ -17,7 +17,7 @@ import com.example.tiendat.helpers.JwtAuthFilter;
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
- 
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

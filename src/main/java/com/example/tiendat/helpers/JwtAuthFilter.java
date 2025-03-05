@@ -133,6 +133,20 @@ public class JwtAuthFilter extends OncePerRequestFilter{
                 return;
             }
 
+            if(jwtService.isBlacklistedToken(jwt)) {
+
+                sendErrorResponse(
+                    response,
+                    request,
+                    HttpServletResponse.SC_UNAUTHORIZED,
+                    "XAC THUC KHONG THANH CONG",
+                    "TOKEN BI KHOA"
+                );
+
+                return;
+
+            }
+
             userId = jwtService.getUserIdFromJwt(jwt);
             // logger.info(userId);
             if(userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {

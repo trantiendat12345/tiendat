@@ -15,6 +15,9 @@ public class JWTConfig {
     @Value("${jwt.issuer}")
     private String issuer;
 
+    @Value("${jwt.expirationRefreshToken}")
+    private Long refreshTokenExpirationTime;
+
     public String getSecretKey() {
         return secretKey;
     }
@@ -25,6 +28,10 @@ public class JWTConfig {
 
     public String getIssue() {
         return issuer;
+    }
+
+    public Long getRefreshTokenExpirationTime() {
+        return refreshTokenExpirationTime;
     }
 
 }

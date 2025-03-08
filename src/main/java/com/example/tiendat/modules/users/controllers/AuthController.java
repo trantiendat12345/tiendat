@@ -1,5 +1,7 @@
 package com.example.tiendat.modules.users.controllers;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +18,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import jakarta.validation.Valid;
 
 import com.example.tiendat.modules.users.requests.LoginRequest;
+import com.example.tiendat.modules.users.requests.RefreshTokenRequest;
 import com.example.tiendat.modules.users.resources.LoginResource;
+import com.example.tiendat.modules.users.resources.RefreshTokenResource;
 import com.example.tiendat.modules.users.services.interfaces.UserServiceInterface;
 import com.example.tiendat.resources.ErrorResource;
+import com.example.tiendat.modules.users.entities.RefreshToken;
+import com.example.tiendat.modules.users.repositories.RefreshTokenRepository;
 import com.example.tiendat.modules.users.requests.BlacklistTokenRequest;
 import com.example.tiendat.modules.users.services.impl.BlacklistService;
 import com.example.tiendat.resources.MessageResource;
+import com.example.tiendat.services.JWTService;
 
 @Validated
 @RestController
@@ -29,11 +36,16 @@ import com.example.tiendat.resources.MessageResource;
 public class AuthController { // quan li dang nhap
 
     private final UserServiceInterface userService;
+    public static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private BlacklistService blacklistService;
 
-    public static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    @Autowired
+    private JWTService jwtService;
+
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
 
     public AuthController(UserServiceInterface userService) {
         this.userService = userService;
@@ -92,6 +104,45 @@ public class AuthController { // quan li dang nhap
         }
 
     }
+
+    @PostMapping("refresh")
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+
+        String refreshToken = request.getRefreshToken();
+
+        if(!jwtService.isRefreshTokenValid(refreshToken)) {
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResource("Refresh Token khong hop le"));
+
+        }
+
+        Optional<RefreshToken> dbRefreshTokenOptional = refreshTokenRepository.findByRefreshToken(refreshToken);
+
+        if(dbRefreshTokenOptional.isPresent()) {
+
+            RefreshToken dBRefreshToken = dbRefreshTokenOptional.get();
+            Long userId = dBRefreshToken.getUserId();
+            String email = dBRefreshToken.getUser().getEmail();
+
+            String newToken = jwtService.generateToken(userId, email);
+            String newRefreshToken = jwtService.generateRefreshToken(userId, email);
+
+            return ResponseEntity.ok(new RefreshTokenResource(newToken, newRefreshToken));
+            
+        }
+
+        return ResponseEntity.internalServerError().body(new MessageResource("Network Error!"));
+
+        // Long userId = Long.valueOf(jwtService.getUserIdFromJwt(refreshToken));
+        // String email = jwtService.getEmailFromJwt(refreshToken);
+
+        // String newToken = jwtService.generateToken(userId, email);
+        // String newRefreshToken = jwtService.generateRefreshToken(userId, email);
+
+        // return ResponseEntity.ok(new RefreshTokenResource(newToken, newRefreshToken));
+
+    }
+    
     
     
 }

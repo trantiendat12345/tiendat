@@ -34,7 +34,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 //1. Route AUTH - No JWT required
                 .requestMatchers(
-                    "/api/v1/auth/login"
+                    "/api/v1/auth/login",
+                    "/api/v1/auth/refresh"
                 ).permitAll()
 
                 .requestMatchers(

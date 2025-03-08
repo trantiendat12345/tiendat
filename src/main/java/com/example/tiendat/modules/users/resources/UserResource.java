@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+// import lombok.RequiredArgsConstructor;
 
 @Data
 @Builder
-@RequiredArgsConstructor
+// @RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserResource {
 
@@ -17,22 +17,23 @@ public class UserResource {
     private final String name;
     private final String phone;
 
-    // public UserResource(Long id, String email, String name) {
-    //     this.id = id;
-    //     this.email = email;
-    //     this.name = name;
-    // }
+    public UserResource(Long id, String email, String name, String phone) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.phone = phone;
+    }
 
-    // public String getEmail() {
-    //     return email;
-    // }
+    public String getEmail() {
+        return email;
+    }
 
-    // public Long getId() {
-    //     return id;
-    // }
+    public Long getId() {
+        return id;
+    }
 
-    // public String getName() {
-    //     return name;
-    // }
+    public String getName() {
+        return name;
+    }
     
 }

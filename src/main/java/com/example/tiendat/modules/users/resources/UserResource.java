@@ -35,5 +35,9 @@ public class UserResource {
     public String getName() {
         return name;
     }
+
+    public String getPhone() {
+        return phone;
+    }
     
 }

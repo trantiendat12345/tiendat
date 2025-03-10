@@ -3,6 +3,7 @@ package com.example.tiendat.modules.users.services.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.example.tiendat.modules.users.repositories.BlacklistedTokenRepository;
@@ -13,6 +14,7 @@ import java.util.Date;
 import com.example.tiendat.modules.users.entities.BlacklistedToken;
 import com.example.tiendat.modules.users.requests.BlacklistTokenRequest;
 import com.example.tiendat.services.JWTService;
+import com.example.tiendat.resources.ApiResource;
 import com.example.tiendat.resources.MessageResource;
 
 import io.jsonwebtoken.Claims;
@@ -36,7 +38,7 @@ public class BlacklistService {
             
             if(blacklistedTokenRepository.existsByToken(request.getToken())) {
 
-                return new MessageResource("Token da ton tai trong blacklist");
+                return ApiResource.error("TOKEN_ERROR", "Token da ton tai", HttpStatus.BAD_REQUEST);
 
             }
 

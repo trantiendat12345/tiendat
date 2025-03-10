@@ -1,6 +1,7 @@
 package com.example.tiendat.modules.users.repositories;
 
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,8 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
 
     Optional<RefreshToken> findByRefreshToken(String refreshToken);
     Optional<RefreshToken> findByUserId(Long userId);
+
+    int deleteByExpiryDateBefore(LocalDateTime currentDateTime);
 
     
 }

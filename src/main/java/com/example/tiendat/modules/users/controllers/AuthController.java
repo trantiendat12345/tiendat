@@ -29,6 +29,7 @@ import com.example.tiendat.modules.users.requests.BlacklistTokenRequest;
 import com.example.tiendat.modules.users.services.impl.BlacklistService;
 import com.example.tiendat.resources.MessageResource;
 import com.example.tiendat.services.JWTService;
+import com.example.tiendat.resources.ApiResource;
 
 @Validated
 @RestController
@@ -56,10 +57,13 @@ public class AuthController { // quan li dang nhap
         Object result = userService.authenticate(request);
         
         if(result instanceof LoginResource loginResource) {
-            return ResponseEntity.ok(loginResource);
+
+            ApiResource<LoginResource> response = ApiResource.ok(loginResource, "SUCCESS");
+
+            return ResponseEntity.ok(response);
         }
 
-        if (result instanceof ErrorResource errorResource) {
+        if (result instanceof ApiResource errorResource) {
             return ResponseEntity.unprocessableEntity().body(errorResource);
         }
 
@@ -74,6 +78,7 @@ public class AuthController { // quan li dang nhap
             logger.info("1234");
             
             Object result = blacklistService.create(request);
+
             return ResponseEntity.ok(result);
 
         } catch (Exception e) {
@@ -93,13 +98,27 @@ public class AuthController { // quan li dang nhap
 
             BlacklistTokenRequest request = new BlacklistTokenRequest();
             request.setToken(token);
+            blacklistService.create(request);
 
-            Object message = blacklistService.create(request);
-            return ResponseEntity.ok(message);
+            // Object message = blacklistService.create(request);
+
+            ApiResource<Void> response = ApiResource.<Void>builder()
+                .success(true)
+                .message("DANG XUAT THANH CONG")
+                .status(HttpStatus.OK)
+                .build();
+
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
 
-            return ResponseEntity.internalServerError().body(new MessageResource("Network Error!"));
+            ApiResource<Void> errorResponse = ApiResource.<Void>builder()
+                .success(false)
+                .message("Network Error!")
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
+
+            return ResponseEntity.internalServerError().body(errorResponse);
 
         }
 
@@ -124,7 +143,7 @@ public class AuthController { // quan li dang nhap
             Long userId = dBRefreshToken.getUserId();
             String email = dBRefreshToken.getUser().getEmail();
 
-            String newToken = jwtService.generateToken(userId, email);
+            String newToken = jwtService.generateToken(userId, email, null);
             String newRefreshToken = jwtService.generateRefreshToken(userId, email);
 
             return ResponseEntity.ok(new RefreshTokenResource(newToken, newRefreshToken));

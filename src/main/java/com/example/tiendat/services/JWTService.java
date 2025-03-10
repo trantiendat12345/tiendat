@@ -43,12 +43,17 @@ public class JWTService {
         this.key = Keys.hmacShaKeyFor(Base64.getEncoder().encode(jwtConfig.getSecretKey().getBytes())); // tao key
     }
 
-    public String generateToken(Long userId, String email) {
+    public String generateToken(Long userId, String email, Long expirationTime) {
 
         logger.info("generating...");
 
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtConfig.getExpirationTime());
+
+        if(expirationTime == null) {
+            expirationTime = jwtConfig.getExpirationTime();
+        }
+
+        Date expiryDate = new Date(now.getTime() + expirationTime);
 
         return Jwts.builder()
         .setSubject(String.valueOf(userId))

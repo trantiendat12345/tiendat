@@ -6,6 +6,7 @@ import com.example.tiendat.modules.users.requests.LoginRequest;
 import com.example.tiendat.modules.users.resources.LoginResource;
 import com.example.tiendat.modules.users.resources.UserResource;
 import com.example.tiendat.modules.users.services.interfaces.UserServiceInterface;
+import com.example.tiendat.resources.ApiResource;
 import com.example.tiendat.resources.ErrorResource;
 import com.example.tiendat.services.BaseService;
 import com.example.tiendat.services.JWTService;
@@ -16,6 +17,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,8 @@ public class UserService extends BaseService implements UserServiceInterface {
     @Autowired
     private UserRepository userRepository;
 
+    @Value("${jwt.defaultExpiration}")
+    private long defaultExpiration;
 
     @Override
     public Object authenticate(LoginRequest request) {
@@ -51,7 +56,7 @@ public class UserService extends BaseService implements UserServiceInterface {
 
             // String token = "random_token";
             UserResource userResource = new UserResource(user.getId(), user.getEmail(), user.getName(), user.getPhone());
-            String token = jwtService.generateToken(user.getId(), user.getEmail()); // token chua thong tin user
+            String token = jwtService.generateToken(user.getId(), user.getEmail(), defaultExpiration); // token chua thong tin user
 
             String refreshToken = jwtService.generateRefreshToken(user.getId(), user.getEmail());
 
@@ -62,10 +67,12 @@ public class UserService extends BaseService implements UserServiceInterface {
             // throw new RuntimeException("Error " + e.getMessage());
             logger.error("Error: ", e.getMessage());
 
-            Map<String, String> errors = new HashMap<>();
-            errors.put("message", e.getMessage());
-            ErrorResource errorResource = new ErrorResource("Error",errors);
-            return errorResource;
+            return ApiResource.error("AUTH_ERROR", e.getMessage(), HttpStatus.UNAUTHORIZED);
+
+            // Map<String, String> errors = new HashMap<>();
+            // errors.put("message", e.getMessage());
+            // ErrorResource errorResource = new ErrorResource("Error",errors);
+            // return errorResource;
 
         }
     

@@ -10,9 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.example.tiendat.modules.users.entities.User;
-import com.example.tiendat.resources.SuccessResource;
+// import com.example.tiendat.resources.SuccessResource;
 import com.example.tiendat.modules.users.resources.UserResource;
 import com.example.tiendat.modules.users.repositories.UserRepository;
+import com.example.tiendat.resources.ApiResource;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -42,7 +43,9 @@ public class UserController { // quan li nguoi dung
             .phone(user.getPhone())
             .build();
 
-        SuccessResource<UserResource> response = new SuccessResource<>("Success", userResource);
+        ApiResource<UserResource> response = ApiResource.ok(userResource, "SUCCESS");
+
+        // SuccessResource<UserResource> response = new SuccessResource<>("Success", userResource);
         logger.info("Success!");
 
         return ResponseEntity.ok(response);

@@ -1,6 +1,12 @@
 package com.example.tiendat.modules.users.services.impl;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +25,20 @@ public class UserCatalogueService extends BaseService implements UserCatalogueSe
 
     @Autowired
     private UserCatalogueRepository userCatalogueRepository;
+
+    @Override
+    public Page<UserCatalogue> paginate(Map<String, String[]> parameters) {
+
+        int page = parameters.containsKey("page") ? Integer.parseInt(parameters.get("page")[0]) : 1;
+        int perpage = parameters.containsKey("perpage") ? Integer.parseInt(parameters.get("perpage")[0]) : 20;
+        String sortParam = parameters.containsKey("sort") ? parameters.get("sort")[0] : null;
+        Sort sort = createSort(sortParam);
+
+        Pageable pageable = PageRequest.of(page - 1, perpage, sort);
+
+        return userCatalogueRepository.findAll(pageable);
+
+    }
 
     @Override
     @Transactional

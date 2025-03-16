@@ -7,7 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +26,13 @@ import com.example.tiendat.modules.users.requests.UserCatalogue.UpdateRequest;
 import com.example.tiendat.resources.ApiResource;
 import com.example.tiendat.modules.users.services.interfaces.UserCatalogueServiceInterface;
 import com.example.tiendat.modules.users.resources.UserCatalogueResource;
-import com.example.tiendat.modules.users.repositories.UserCatalogueRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Validated
 @RestController
@@ -39,15 +43,32 @@ public class UserCatalogueController { // quan li danh sach nguoi dung
 
     private final UserCatalogueServiceInterface userCatalogueService;
 
-    @Autowired
-    private UserCatalogueRepository userCatalogueRepository;
-
     public UserCatalogueController(UserCatalogueServiceInterface userCatalogueService) {
         this.userCatalogueService = userCatalogueService;
     }
 
+    @GetMapping("user_catalogues/all")
+    public ResponseEntity<?> list(HttpServletRequest request) {
+
+        Map<String, String[]> parameters = request.getParameterMap();
+        List<UserCatalogue> userCatalogues = userCatalogueService.getAll(parameters);
+
+        List<UserCatalogueResource> userCatalogueResource = userCatalogues.stream().map(userCatalogue -> UserCatalogueResource.builder()
+            .id(userCatalogue.getId())
+            .name(userCatalogue.getName())
+            .publish(userCatalogue.getPublish())
+            .build()).collect(Collectors.toList());
+        
+        ApiResource<List<UserCatalogueResource>> response = ApiResource.ok(userCatalogueResource, "SUCESS");
+
+        logger.info("method list running ...");
+
+        return ResponseEntity.ok(response);
+    }
+    
+
     @GetMapping("user_catalogues")
-    public ResponseEntity<?> index(HttpServletRequest request) {
+    public ResponseEntity<?> pagination(HttpServletRequest request) {
 
         Map<String, String[]> parameters = request.getParameterMap();
 

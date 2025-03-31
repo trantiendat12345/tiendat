@@ -1,7 +1,6 @@
 package com.example.tiendat.modules.users.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -26,12 +24,12 @@ import com.example.tiendat.modules.users.requests.UserCatalogue.UpdateRequest;
 import com.example.tiendat.resources.ApiResource;
 import com.example.tiendat.modules.users.services.interfaces.UserCatalogueServiceInterface;
 import com.example.tiendat.modules.users.resources.UserCatalogueResource;
+import com.example.tiendat.modules.users.mappers.UserCatalogueMapper;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Validated
@@ -43,29 +41,33 @@ public class UserCatalogueController { // quan li danh sach nguoi dung
 
     private final UserCatalogueServiceInterface userCatalogueService;
 
-    public UserCatalogueController(UserCatalogueServiceInterface userCatalogueService) {
+    private final UserCatalogueMapper userCatalogueMapper;
+
+    public UserCatalogueController(UserCatalogueServiceInterface userCatalogueService, UserCatalogueMapper userCatalogueMapper) {
         this.userCatalogueService = userCatalogueService;
+        this.userCatalogueMapper = userCatalogueMapper;
     }
 
-    @GetMapping("user_catalogues/all")
+    @GetMapping("user_catalogues/list")
     public ResponseEntity<?> list(HttpServletRequest request) {
 
         Map<String, String[]> parameters = request.getParameterMap();
         List<UserCatalogue> userCatalogues = userCatalogueService.getAll(parameters);
 
-        List<UserCatalogueResource> userCatalogueResource = userCatalogues.stream().map(userCatalogue -> UserCatalogueResource.builder()
-            .id(userCatalogue.getId())
-            .name(userCatalogue.getName())
-            .publish(userCatalogue.getPublish())
-            .build()).collect(Collectors.toList());
-        
-        ApiResource<List<UserCatalogueResource>> response = ApiResource.ok(userCatalogueResource, "SUCESS");
+        List<UserCatalogueResource> userCatalogueResource = userCatalogueMapper.tList(userCatalogues);
+
+        // List<UserCatalogueResource> userCatalogueResource = userCatalogues.stream().map(userCatalogue -> UserCatalogueResource.builder()
+        //     .id(userCatalogue.getId())
+        //     .name(userCatalogue.getName())
+        //     .publish(userCatalogue.getPublish())
+        //     .build()).collect(Collectors.toList());
+
+        ApiResource<List<UserCatalogueResource>> response = ApiResource.ok(userCatalogueResource, "SUCCESS");
 
         logger.info("method list running ...");
 
         return ResponseEntity.ok(response);
     }
-    
 
     @GetMapping("user_catalogues")
     public ResponseEntity<?> pagination(HttpServletRequest request) {
@@ -74,32 +76,35 @@ public class UserCatalogueController { // quan li danh sach nguoi dung
 
         Page<UserCatalogue> userCatalogues = userCatalogueService.paginate(parameters);
 
-        Page<UserCatalogueResource> userCataloguesResource = userCatalogues.map(userCatalogue -> UserCatalogueResource.builder()
-            .id(userCatalogue.getId())
-            .name(userCatalogue.getName())
-            .publish(userCatalogue.getPublish())
-            .build());
+        Page<UserCatalogueResource> userCataloguesResource = userCatalogueMapper.toResourcePage(userCatalogues);
 
-        ApiResource<Page<UserCatalogueResource>> response = ApiResource.ok(userCataloguesResource, "SUCESS");
+        // Page<UserCatalogueResource> userCataloguesResource = userCatalogues.map(userCatalogue -> UserCatalogueResource.builder()
+        //     .id(userCatalogue.getId())
+        //     .name(userCatalogue.getName())
+        //     .publish(userCatalogue.getPublish())
+        //     .build());
+
+        ApiResource<Page<UserCatalogueResource>> response = ApiResource.ok(userCataloguesResource, "SUCCESS");
 
         logger.info("method getUserCatalogues running ...");
 
         return ResponseEntity.ok(response);
     }
-    
 
     @PostMapping("user_catalogues")
     public ResponseEntity<?> store(@Valid @RequestBody StoreRequest request) {
-        
+
         UserCatalogue userCatalogue = userCatalogueService.create(request);
 
-        UserCatalogueResource userCatalogueResource = UserCatalogueResource.builder()
-            .id(userCatalogue.getId())
-            .name(userCatalogue.getName())
-            .publish(userCatalogue.getPublish())
-            .build();
+        UserCatalogueResource userCatalogueResource = userCatalogueMapper.tResource(userCatalogue);
 
-        ApiResource<UserCatalogueResource> response = ApiResource.ok(userCatalogueResource, "SUCESS");
+        // UserCatalogueResource userCatalogueResource = UserCatalogueResource.builder()
+        //     .id(userCatalogue.getId())
+        //     .name(userCatalogue.getName())
+        //     .publish(userCatalogue.getPublish())
+        //     .build();
+
+        ApiResource<UserCatalogueResource> response = ApiResource.ok(userCatalogueResource, "SUCCESS");
 
         logger.info("method store running ...");
 
@@ -113,13 +118,16 @@ public class UserCatalogueController { // quan li danh sach nguoi dung
 
         try {
             UserCatalogue userCatalogue = userCatalogueService.update(id, request);
-            UserCatalogueResource userCatalogueResource = UserCatalogueResource.builder()
-                .id(userCatalogue.getId())
-                .name(userCatalogue.getName())
-                .publish(userCatalogue.getPublish())
-                .build();
 
-            ApiResource<UserCatalogueResource> response = ApiResource.ok(userCatalogueResource, "SUCESS");
+            UserCatalogueResource userCatalogueResource = userCatalogueMapper.tResource(userCatalogue);
+
+            // UserCatalogueResource userCatalogueResource = UserCatalogueResource.builder()
+            //     .id(userCatalogue.getId())
+            //     .name(userCatalogue.getName())
+            //     .publish(userCatalogue.getPublish())
+            //     .build();
+
+            ApiResource<UserCatalogueResource> response = ApiResource.ok(userCatalogueResource, "SUCCESS");
 
             return ResponseEntity.ok(response);
 
@@ -134,6 +142,5 @@ public class UserCatalogueController { // quan li danh sach nguoi dung
         }
 
     }
-    
-    
+
 }

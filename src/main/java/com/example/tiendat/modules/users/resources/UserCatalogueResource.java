@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Builder;
 import lombok.Data;
-// import lombok.RequiredArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @Builder
-// @RequiredArgsConstructor
+@RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserCatalogueResource {
 
@@ -23,9 +23,9 @@ public class UserCatalogueResource {
     public String getName() {
         return name;
     }
-    
+
     public Integer getPublish() {
         return publish;
     }
-    
+
 }

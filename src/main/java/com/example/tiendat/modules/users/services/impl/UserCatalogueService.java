@@ -22,6 +22,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 import com.example.tiendat.helpers.FilterParameter;
 import com.example.tiendat.modules.users.entities.UserCatalogue;
+import com.example.tiendat.modules.users.mappers.UserCatalogueMapper;
 import com.example.tiendat.modules.users.requests.UserCatalogue.StoreRequest;
 import com.example.tiendat.modules.users.requests.UserCatalogue.UpdateRequest;
 import com.example.tiendat.modules.users.repositories.UserCatalogueRepository;
@@ -33,6 +34,12 @@ public class UserCatalogueService extends BaseService implements UserCatalogueSe
 
     @Autowired
     private UserCatalogueRepository userCatalogueRepository;
+
+    private final UserCatalogueMapper userCatalogueMapper;
+
+    public UserCatalogueService(UserCatalogueMapper userCatalogueMapper) {
+        this.userCatalogueMapper = userCatalogueMapper;
+    }
 
     @Override
     public List<UserCatalogue> getAll(Map<String, String[]> parameters) {
@@ -90,13 +97,15 @@ public class UserCatalogueService extends BaseService implements UserCatalogueSe
 
         try {
 
-            UserCatalogue payload = UserCatalogue.builder()
-                .name(request.getName())
-                .publish(request.getPublish())
-                .build();
+            UserCatalogue payload = userCatalogueMapper.toEntity(request);
+
+            // UserCatalogue payload = UserCatalogue.builder()
+            //     .name(request.getName())
+            //     .publish(request.getPublish())
+            //     .build();
 
             return userCatalogueRepository.save(payload);
-            
+
         } catch (Exception e) {
 
             throw new RuntimeException("Transaction failed: " + e.getMessage());
@@ -112,12 +121,14 @@ public class UserCatalogueService extends BaseService implements UserCatalogueSe
         UserCatalogue userCatalogue = userCatalogueRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Khong tim thay nhom thanh vien"));
 
-        UserCatalogue payload = userCatalogue.toBuilder()
-            .name(request.getName())
-            .publish(request.getPublish())
-            .build();
+        userCatalogueMapper.updateEntityFromRequest(request, userCatalogue);
 
-        return userCatalogueRepository.save(payload);
+        // UserCatalogue payload = userCatalogue.toBuilder()
+        //     .name(request.getName())
+        //     .publish(request.getPublish())
+        //     .build();
+
+        return userCatalogueRepository.save(userCatalogue);
     }
-    
+
 }

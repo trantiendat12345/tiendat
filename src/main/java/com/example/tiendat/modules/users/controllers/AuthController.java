@@ -22,7 +22,6 @@ import com.example.tiendat.modules.users.requests.RefreshTokenRequest;
 import com.example.tiendat.modules.users.resources.LoginResource;
 import com.example.tiendat.modules.users.resources.RefreshTokenResource;
 import com.example.tiendat.modules.users.services.interfaces.UserServiceInterface;
-import com.example.tiendat.resources.ErrorResource;
 import com.example.tiendat.modules.users.entities.RefreshToken;
 import com.example.tiendat.modules.users.repositories.RefreshTokenRepository;
 import com.example.tiendat.modules.users.requests.BlacklistTokenRequest;
@@ -55,7 +54,7 @@ public class AuthController { // quan li dang nhap
     @PostMapping("login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         Object result = userService.authenticate(request);
-        
+
         if(result instanceof LoginResource loginResource) {
 
             ApiResource<LoginResource> response = ApiResource.ok(loginResource, "SUCCESS");
@@ -72,17 +71,17 @@ public class AuthController { // quan li dang nhap
 
     @PostMapping("blacklisted_tokens")
     public ResponseEntity<?> addTokenToBlacklist(@Valid @RequestBody BlacklistTokenRequest request) {
-        
+
         try {
 
             logger.info("1234");
-            
+
             Object result = blacklistService.create(request);
 
             return ResponseEntity.ok(result);
 
         } catch (Exception e) {
-            
+
             return ResponseEntity.internalServerError().body(new MessageResource("Network Error!") );
 
         }
@@ -93,7 +92,7 @@ public class AuthController { // quan li dang nhap
     public ResponseEntity<?> loggout(@RequestHeader("Authorization") String bearerToken) {
 
         try {
-            
+
             String token = bearerToken.substring(7);
 
             BlacklistTokenRequest request = new BlacklistTokenRequest();
@@ -147,7 +146,7 @@ public class AuthController { // quan li dang nhap
             String newRefreshToken = jwtService.generateRefreshToken(userId, email);
 
             return ResponseEntity.ok(new RefreshTokenResource(newToken, newRefreshToken));
-            
+
         }
 
         return ResponseEntity.internalServerError().body(new MessageResource("Network Error!"));
@@ -161,7 +160,5 @@ public class AuthController { // quan li dang nhap
         // return ResponseEntity.ok(new RefreshTokenResource(newToken, newRefreshToken));
 
     }
-    
-    
-    
+
 }

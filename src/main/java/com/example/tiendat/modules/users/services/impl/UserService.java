@@ -24,7 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService extends BaseService implements UserServiceInterface {
+public class UserService /*extends BaseService*/ implements UserServiceInterface {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 

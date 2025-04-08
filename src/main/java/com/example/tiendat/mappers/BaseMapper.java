@@ -28,5 +28,5 @@ public interface BaseMapper <E, R, C, U> { // E: entity, R: resource, C: create,
     E toEntity(C createRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy=NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntityFromRequest(U UpdateRequest, @MappingTarget E entity);
+    void updateEntityFromRequest(U updateRequest, @MappingTarget E entity);
 }
